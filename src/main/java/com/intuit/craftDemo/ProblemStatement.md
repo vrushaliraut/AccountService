@@ -1,4 +1,4 @@
-# Problem Statement 
+# Problem Statement
 
 • Please implement a simple account/authentication service. At a minimum, your application should be able to
 - create a user account,
