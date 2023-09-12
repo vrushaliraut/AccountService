@@ -4,6 +4,7 @@ import com.intuit.craftDemo.dto.ResponseDto;
 import com.intuit.craftDemo.dto.SignInResponseDto;
 import com.intuit.craftDemo.dto.user.SignInDto;
 import com.intuit.craftDemo.dto.user.SignupDto;
+import com.intuit.craftDemo.exceptions.AuthenticationFailedException;
 import com.intuit.craftDemo.exceptions.CustomException;
 import com.intuit.craftDemo.service.AuthenticationService;
 import com.intuit.craftDemo.service.UserService;
@@ -78,7 +79,7 @@ public class UserControllerTest {
 
         when(userService.SignIn(signInDto)).thenReturn(responseDto);
 
-        SignInResponseDto signInResponseDto = userController.SignIn(signInDto);
+        ResponseEntity<SignInResponseDto> signInResponseDto = userController.SignIn(signInDto);
         assertNotNull(signInResponseDto);
     }
 
@@ -89,6 +90,24 @@ public class UserControllerTest {
         when(userService.SignIn(signInDto)).thenThrow(new CustomException("Invalid credentials"));
 
         assertThrows(CustomException.class, () -> userController.SignIn(signInDto));
+    }
+
+    @Test
+    public void testLogoutValidTokenSuccessfulLogout() throws AuthenticationFailedException {
+        String token = "valid_token";
+        when(authenticationService.invalidateToken(token)).thenReturn(true);
+        ResponseEntity<ResponseDto> response = userController.logout(token);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("success", response.getBody().getStatus());
+    }
+
+    @Test
+    public void testLogout_InvalidToken_FailedLogout() throws AuthenticationFailedException {
+        String token = "invalid_token";
+        when(authenticationService.invalidateToken(token)).thenReturn(false);
+        ResponseEntity<ResponseDto> response = userController.logout(token);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("error", response.getBody().getStatus());
     }
 
 }

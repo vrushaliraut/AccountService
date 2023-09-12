@@ -3,8 +3,8 @@ package com.intuit.craftDemo.dto;
 public class SignInResponseDto {
     private String status;
     private String token;
-
     private String message;
+
     public SignInResponseDto(String status, String token, String message) {
         this.status = status;
         this.token = token;

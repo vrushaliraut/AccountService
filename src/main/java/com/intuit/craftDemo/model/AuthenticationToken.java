@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 @Data
@@ -19,13 +20,16 @@ import java.util.UUID;
         }),
         @UniqueConstraint(columnNames = {
                 "token"
+        }),
+        @UniqueConstraint(columnNames = {
+                "email"
         })
 })
 public class AuthenticationToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @NotBlank
     @Size(max = 100)
@@ -35,19 +39,23 @@ public class AuthenticationToken {
     private Date createdDate;
 
     private Long userId;
+    @NotBlank
+    @Size(max = 50)
+    private String email;
 
 
-    public AuthenticationToken(Long userId) {
+    public AuthenticationToken(Long userId, String email) {
         this.userId = userId;
+        this.email = email;
         this.createdDate = new Date();
         this.token = UUID.randomUUID().toString();
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -73,5 +81,26 @@ public class AuthenticationToken {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AuthenticationToken that = (AuthenticationToken) o;
+        return id.equals(that.id) && token.equals(that.token) && Objects.equals(createdDate, that.createdDate) && userId.equals(that.userId) && email.equals(that.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, token, createdDate, userId, email);
     }
 }

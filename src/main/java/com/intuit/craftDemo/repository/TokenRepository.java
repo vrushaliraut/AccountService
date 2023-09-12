@@ -8,8 +8,7 @@ import java.util.Optional;
 
 
 @Repository
-public interface TokenRepository extends JpaRepository<AuthenticationToken, String> {
-    Optional<String> findTokenByUserId(Long userId);
-
-    Optional<String> findTokenByToken(String token);
+public interface TokenRepository extends JpaRepository<AuthenticationToken, Long> {
+    Optional<AuthenticationToken> findTokenByUserId(Long userId);
+    Optional<AuthenticationToken> findTokenByToken(String token);
 }

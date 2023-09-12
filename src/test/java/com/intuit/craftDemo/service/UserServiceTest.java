@@ -6,6 +6,7 @@ import com.intuit.craftDemo.dto.ResponseDto;
 import com.intuit.craftDemo.dto.SignInResponseDto;
 import com.intuit.craftDemo.dto.user.SignInDto;
 import com.intuit.craftDemo.dto.user.SignupDto;
+import com.intuit.craftDemo.model.AuthenticationToken;
 import com.intuit.craftDemo.model.User;
 import com.intuit.craftDemo.repository.UserRepository;
 import org.junit.Test;
@@ -96,7 +97,7 @@ public class UserServiceTest {
 
         when(userRepository.findByEmail(signInDto.getEmail())).thenReturn(Optional.of(user));
 
-        when(authenticationService.getToken(user.getId())).thenReturn(Optional.of(anyString()));
+        when(authenticationService.getToken(user.getId())).thenReturn(Optional.of(new AuthenticationToken()));
 
         // Act
         SignInResponseDto response = userService.SignIn(signInDto);
@@ -124,7 +125,7 @@ public class UserServiceTest {
 
         when(authenticationService.getToken(user.getId()))
                 .thenReturn(Optional.empty())  // First call returns empty
-                .thenReturn(Optional.of("user token")); // Second call returns a token
+                .thenReturn(Optional.of(new AuthenticationToken(user.getId(), user.getEmail()))); // Second call returns a token
 
         // Act
         SignInResponseDto response = userService.SignIn(signInDto);

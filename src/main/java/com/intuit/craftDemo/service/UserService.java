@@ -48,7 +48,7 @@ public class UserService {
         try {
             //generate token for user
             user = userRepository.save(user);
-            AuthenticationToken authenticationToken = new AuthenticationToken(user.getId());
+            AuthenticationToken authenticationToken = new AuthenticationToken(user.getId(), user.getEmail());
 
             //save token
             authenticationService.saveConfirmationToken(authenticationToken);
@@ -84,25 +84,25 @@ public class UserService {
         }
 
         //call service
-        Optional<String> token = authenticationService.getToken(user.getId());
+        Optional<AuthenticationToken> token = authenticationService.getToken(user.getId());
         if (token.isPresent()) {
             logger.info("user is already logged in");
             return new SignInResponseDto(ResponseConstants.ERROR, EMPTY_TOKEN, USER_HAS_BEEN_ALREADY_LOGGED_IN);
         }
 
         //save token in database
-        AuthenticationToken authenticationToken = new AuthenticationToken(user.getId());
-        logger.info("generate new token");
+        AuthenticationToken authenticationToken = new AuthenticationToken(user.getId(), user.getEmail());
         authenticationService.saveConfirmationToken(authenticationToken);
 
-        Optional<String> tokenOptional = authenticationService.getToken(user.getId());
-        if (tokenOptional.isEmpty()) {
-            logger.info("failed to generate new token");
+        Optional<AuthenticationToken> newToken = authenticationService.getToken(user.getId());
+        if (newToken.isPresent()) {
+            logger.info("login successfully");
+            AuthenticationToken authToken = newToken.get();
+            return new SignInResponseDto(ResponseConstants.SUCCESS, authToken.getToken(), TOKEN);
+        } else {
+            logger.info("generate new token is empty");
+            return new SignInResponseDto(ResponseConstants.SUCCESS, "", TOKEN);
         }
-        String newToken = tokenOptional.get();
-        System.out.println("login successfully" + newToken);
-        logger.info("login successfully" + newToken);
-        return new SignInResponseDto(ResponseConstants.SUCCESS, newToken, TOKEN);
     }
 
     public String hashPassword(String password) throws NoSuchAlgorithmException {
