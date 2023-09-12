@@ -1,6 +1,8 @@
 package com.intuit.craftDemo.controller;
 
 import com.intuit.craftDemo.dto.ResponseDto;
+import com.intuit.craftDemo.dto.SignInResponseDto;
+import com.intuit.craftDemo.dto.user.SignInDto;
 import com.intuit.craftDemo.dto.user.SignupDto;
 import com.intuit.craftDemo.exceptions.CustomException;
 import com.intuit.craftDemo.service.AuthenticationService;
@@ -18,8 +20,7 @@ import org.springframework.validation.FieldError;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -68,6 +69,26 @@ public class UserControllerTest {
         assertNotNull(response);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("error", response.getBody().getStatus());
+    }
+
+    @Test
+    public void testSignInHasValidCredentialsSuccess() throws CustomException {
+        SignInDto signInDto = new SignInDto("valid@example.com", "password");
+        SignInResponseDto responseDto = new SignInResponseDto("success", "valid_token", "message");
+
+        when(userService.SignIn(signInDto)).thenReturn(responseDto);
+
+        SignInResponseDto signInResponseDto = userController.SignIn(signInDto);
+        assertNotNull(signInResponseDto);
+    }
+
+    @Test
+    public void testForInvalidCredentialsInSignIn() {
+        SignInDto signInDto = new SignInDto("invalid@example.com", "wrong_password");
+
+        when(userService.SignIn(signInDto)).thenThrow(new CustomException("Invalid credentials"));
+
+        assertThrows(CustomException.class, () -> userController.SignIn(signInDto));
     }
 
 }

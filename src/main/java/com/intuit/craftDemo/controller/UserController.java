@@ -2,6 +2,8 @@ package com.intuit.craftDemo.controller;
 
 import com.intuit.craftDemo.config.ResponseConstants;
 import com.intuit.craftDemo.dto.ResponseDto;
+import com.intuit.craftDemo.dto.SignInResponseDto;
+import com.intuit.craftDemo.dto.user.SignInDto;
 import com.intuit.craftDemo.dto.user.SignupDto;
 import com.intuit.craftDemo.exceptions.CustomException;
 import com.intuit.craftDemo.service.UserService;
@@ -38,6 +40,11 @@ public class UserController {
         logger.info("no binding errors");
         ResponseDto responseDto = userService.Signup(signupDto);
         return ResponseEntity.ok(responseDto);
+    }
+
+    @PostMapping("/signIn")
+    public SignInResponseDto SignIn(@Validated @RequestBody SignInDto signInDto) throws CustomException {
+        return userService.SignIn(signInDto);
     }
 
     public static ResponseDto getResponseDto(BindingResult bindingResult) {

@@ -1,8 +1,9 @@
 package com.intuit.craftDemo.service;
 
-import com.intuit.craftDemo.config.Constants;
 import com.intuit.craftDemo.config.ResponseConstants;
 import com.intuit.craftDemo.dto.ResponseDto;
+import com.intuit.craftDemo.dto.SignInResponseDto;
+import com.intuit.craftDemo.dto.user.SignInDto;
 import com.intuit.craftDemo.dto.user.SignupDto;
 import com.intuit.craftDemo.exceptions.CustomException;
 import com.intuit.craftDemo.model.AuthenticationToken;
@@ -18,6 +19,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
+import static com.intuit.craftDemo.config.Constants.*;
+
 @Service
 public class UserService {
     @Autowired
@@ -31,7 +34,7 @@ public class UserService {
     public ResponseDto Signup(SignupDto signupDto) throws CustomException {
         Optional<User> email = userRepository.findByEmail(signupDto.getEmail());
         if (email.isPresent()) {
-            return new ResponseDto(ResponseConstants.ERROR, Constants.USER_ALREADY_EXISTS);
+            return new ResponseDto(ResponseConstants.ERROR, USER_ALREADY_EXISTS);
         }
         String encryptedPassword = signupDto.getPassword();
         try {
@@ -50,12 +53,56 @@ public class UserService {
             //save token
             authenticationService.saveConfirmationToken(authenticationToken);
             logger.info("save token successfully");
-            return new ResponseDto(ResponseConstants.SUCCESS, Constants.USER_CREATED);
+            return new ResponseDto(ResponseConstants.SUCCESS, USER_CREATED);
 
         } catch (Exception e) {
-            logger.debug("hashing failed" + Constants.HASHING_FAILED);
-            return new ResponseDto(ResponseConstants.ERROR, Constants.HASHING_FAILED);
+            logger.debug("hashing failed" + HASHING_FAILED);
+            return new ResponseDto(ResponseConstants.ERROR, HASHING_FAILED);
         }
+    }
+
+    public SignInResponseDto SignIn(SignInDto signInDto) {
+        //find user by email
+        Optional<User> userOptional = userRepository.findByEmail(signInDto.getEmail());
+        if (userOptional.isEmpty()) {
+            logger.info("user does not exists");
+            return new SignInResponseDto(ResponseConstants.ERROR, EMPTY_TOKEN, USER_DOES_NOT_EXISTS);
+        }
+
+        //check password match
+        User user = userOptional.get();
+        logger.info("user info ::" + user.getEmail());
+        try {
+            if (!user.getPassword().equals(hashPassword(signInDto.getPassword()))) {
+                logger.info("authentication failed");
+                return new SignInResponseDto(ResponseConstants.ERROR, EMPTY_TOKEN, WRONG_PASSWORD);
+            }
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            logger.error("hashing password failed : {}", e.getMessage());
+            throw new CustomException(e.getMessage());
+        }
+
+        //call service
+        Optional<String> token = authenticationService.getToken(user.getId());
+        if (token.isPresent()) {
+            logger.info("user is already logged in");
+            return new SignInResponseDto(ResponseConstants.ERROR, EMPTY_TOKEN, USER_HAS_BEEN_ALREADY_LOGGED_IN);
+        }
+
+        //save token in database
+        AuthenticationToken authenticationToken = new AuthenticationToken(user.getId());
+        logger.info("generate new token");
+        authenticationService.saveConfirmationToken(authenticationToken);
+
+        Optional<String> tokenOptional = authenticationService.getToken(user.getId());
+        if (tokenOptional.isEmpty()) {
+            logger.info("failed to generate new token");
+        }
+        String newToken = tokenOptional.get();
+        System.out.println("login successfully" + newToken);
+        logger.info("login successfully" + newToken);
+        return new SignInResponseDto(ResponseConstants.SUCCESS, newToken, TOKEN);
     }
 
     public String hashPassword(String password) throws NoSuchAlgorithmException {

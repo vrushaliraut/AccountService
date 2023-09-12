@@ -36,6 +36,7 @@ public class AuthenticationToken {
 
     private Long userId;
 
+
     public AuthenticationToken(Long userId) {
         this.userId = userId;
         this.createdDate = new Date();
