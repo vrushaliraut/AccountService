@@ -32,18 +32,18 @@ public class UserController {
     Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping("/signup")
-    public ResponseEntity<ResponseDto> Signup(@Validated @RequestBody SignupDto signupDto,
+    public ResponseEntity<ResponseDto> signup(@Validated @RequestBody SignupDto signupDto,
                                               BindingResult bindingResult) throws CustomException, NoSuchAlgorithmException {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(getResponseDto(bindingResult));
         }
-        ResponseDto responseDto = userService.Signup(signupDto);
+        ResponseDto responseDto = userService.signup(signupDto);
         return ResponseEntity.ok(responseDto);
     }
 
     @PostMapping("/signIn")
-    public ResponseEntity<SignInResponseDto> SignIn(@Validated @RequestBody SignInDto signInDto) throws CustomException {
-        SignInResponseDto responseDto = userService.SignIn(signInDto);
+    public ResponseEntity<SignInResponseDto> signIn(@Validated @RequestBody SignInDto signInDto) throws CustomException {
+        SignInResponseDto responseDto = userService.signIn(signInDto);
         return ResponseEntity.ok(responseDto);
     }
 

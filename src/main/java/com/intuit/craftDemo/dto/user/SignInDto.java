@@ -1,8 +1,12 @@
 package com.intuit.craftDemo.dto.user;
 
+import javax.validation.constraints.NotEmpty;
+
 public class SignInDto {
+    @NotEmpty(message = "email is required")
     private String email;
 
+    @NotEmpty(message = "password is required")
     private String password;
 
     public SignInDto(String email, String password) {

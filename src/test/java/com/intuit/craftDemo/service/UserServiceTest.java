@@ -50,7 +50,7 @@ public class UserServiceTest {
 
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        ResponseDto response = userService.Signup(signupDto);
+        ResponseDto response = userService.signup(signupDto);
 
         assertEquals(ResponseConstants.SUCCESS, response.getStatus());
         assertEquals("user created successfully", response.getMessage());
@@ -66,7 +66,7 @@ public class UserServiceTest {
         // Mocking userRepository findByEmail to return an Optional containing a user
         when(userRepository.findByEmail(signupDto.getEmail())).thenReturn(Optional.of(user));
 
-        ResponseDto response = userService.Signup(signupDto);
+        ResponseDto response = userService.signup(signupDto);
 
         assertEquals(ResponseConstants.ERROR, response.getStatus());
         assertEquals("user already exists", response.getMessage());
@@ -82,7 +82,7 @@ public class UserServiceTest {
 
         when(userRepository.findByEmail(signInDto.getEmail())).thenReturn(Optional.empty());
 
-        SignInResponseDto response = userService.SignIn(signInDto);
+        SignInResponseDto response = userService.signIn(signInDto);
 
         assertEquals(ResponseConstants.ERROR, response.getStatus());
         assertEquals(USER_DOES_NOT_EXISTS, response.getMessage());
@@ -100,7 +100,7 @@ public class UserServiceTest {
         when(authenticationService.getToken(user.getId())).thenReturn(Optional.of(new AuthenticationToken()));
 
         // Act
-        SignInResponseDto response = userService.SignIn(signInDto);
+        SignInResponseDto response = userService.signIn(signInDto);
 
         // Assert
         assertEquals(ResponseConstants.ERROR, response.getStatus());
@@ -128,7 +128,7 @@ public class UserServiceTest {
                 .thenReturn(Optional.of(new AuthenticationToken(user.getId(), user.getEmail()))); // Second call returns a token
 
         // Act
-        SignInResponseDto response = userService.SignIn(signInDto);
+        SignInResponseDto response = userService.signIn(signInDto);
 
         // Assert
         assertEquals(ResponseConstants.SUCCESS, response.getStatus());
@@ -146,7 +146,7 @@ public class UserServiceTest {
         SignInDto signInDto = new SignInDto("john@example.com", "password");
         when(userRepository.findByEmail(signInDto.getEmail())).thenReturn(Optional.empty());
 
-        SignInResponseDto signInResponseDto = userService.SignIn(signInDto);
+        SignInResponseDto signInResponseDto = userService.signIn(signInDto);
 
         assertEquals(Constants.USER_DOES_NOT_EXISTS, signInResponseDto.getMessage());
     }

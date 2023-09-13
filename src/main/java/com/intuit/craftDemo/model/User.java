@@ -26,10 +26,10 @@ public class User {
     private Long id;
 
     @NotBlank
-    @Size(min = 3, max = 50)
+    @Size(min = 2, max = 50)
     private String first_name;
 
-    @Size(min = 3, max = 50)
+    @Size(min = 1, max = 50)
     private String last_name;
 
     @NaturalId
@@ -39,7 +39,7 @@ public class User {
     private String email;
 
     @NotBlank
-    @Size(min = 6, max = 100)
+    @Size(min = 2, max = 100)
     private String password;
 
     public User(String first_name, String last_name, String email, String password) {

@@ -31,7 +31,7 @@ public class UserService {
 
     Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public ResponseDto Signup(SignupDto signupDto) throws CustomException {
+    public ResponseDto signup(SignupDto signupDto) throws CustomException {
         Optional<User> email = userRepository.findByEmail(signupDto.getEmail());
         if (email.isPresent()) {
             return new ResponseDto(ResponseConstants.ERROR, USER_ALREADY_EXISTS);
@@ -61,7 +61,7 @@ public class UserService {
         }
     }
 
-    public SignInResponseDto SignIn(SignInDto signInDto) {
+    public SignInResponseDto signIn(SignInDto signInDto) {
         //find user by email
         Optional<User> userOptional = userRepository.findByEmail(signInDto.getEmail());
         if (userOptional.isEmpty()) {

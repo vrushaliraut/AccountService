@@ -44,9 +44,9 @@ public class UserControllerTest {
         when(bindingResult.hasErrors()).thenReturn(false);
 
         ResponseDto responseDto = new ResponseDto("success", "User registered successfully");
-        when(userService.Signup(signupDto)).thenReturn(responseDto);
+        when(userService.signup(signupDto)).thenReturn(responseDto);
 
-        ResponseEntity<ResponseDto> response = userController.Signup(signupDto, bindingResult);
+        ResponseEntity<ResponseDto> response = userController.signup(signupDto, bindingResult);
 
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -65,7 +65,7 @@ public class UserControllerTest {
         FieldError fieldError = new FieldError("signUpDto", "email", "invalid email format");
         when(bindingResult.getFieldErrors()).thenReturn(Collections.singletonList(fieldError));
 
-        ResponseEntity<ResponseDto> response = userController.Signup(signupDto, bindingResult);
+        ResponseEntity<ResponseDto> response = userController.signup(signupDto, bindingResult);
 
         assertNotNull(response);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -77,9 +77,9 @@ public class UserControllerTest {
         SignInDto signInDto = new SignInDto("valid@example.com", "password");
         SignInResponseDto responseDto = new SignInResponseDto("success", "valid_token", "message");
 
-        when(userService.SignIn(signInDto)).thenReturn(responseDto);
+        when(userService.signIn(signInDto)).thenReturn(responseDto);
 
-        ResponseEntity<SignInResponseDto> signInResponseDto = userController.SignIn(signInDto);
+        ResponseEntity<SignInResponseDto> signInResponseDto = userController.signIn(signInDto);
         assertNotNull(signInResponseDto);
     }
 
@@ -87,9 +87,9 @@ public class UserControllerTest {
     public void testForInvalidCredentialsInSignIn() {
         SignInDto signInDto = new SignInDto("invalid@example.com", "wrong_password");
 
-        when(userService.SignIn(signInDto)).thenThrow(new CustomException("Invalid credentials"));
+        when(userService.signIn(signInDto)).thenThrow(new CustomException("Invalid credentials"));
 
-        assertThrows(CustomException.class, () -> userController.SignIn(signInDto));
+        assertThrows(CustomException.class, () -> userController.signIn(signInDto));
     }
 
     @Test
