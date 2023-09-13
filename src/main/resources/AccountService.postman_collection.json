@@ -1,0 +1,96 @@
+{
+	"info": {
+		"_postman_id": "5ff37c4c-6878-4a8b-b377-9b74d1e3d8ee",
+		"name": "AccountService",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17324358"
+	},
+	"item": [
+		{
+			"name": "ping",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"twelveseptThree\",\n    \"lastname\": \"Birdawade\",\n    \"email\": \"twelveseptThreet@example.com\",\n    \"password\": \"twelveseptThree\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/signup",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "signin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"vrushali1@example.com\",\n    \"password\": \"vrushali1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/signIn",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"signIn"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/logout?token=2741c20e-17fe-4948-beda-80125162ab6d",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"logout"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "2741c20e-17fe-4948-beda-80125162ab6d"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
