@@ -16,8 +16,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static com.intuit.craftDemo.config.Constants.USER_DOES_NOT_EXISTS;
@@ -149,5 +154,21 @@ public class UserServiceTest {
         SignInResponseDto signInResponseDto = userService.signIn(signInDto);
 
         assertEquals(Constants.USER_DOES_NOT_EXISTS, signInResponseDto.getMessage());
+    }
+
+    @Test
+    public void testFetchAllUsersFunction() {
+        Page<User> mockPage = new PageImpl<>(Arrays.asList(
+                new User("John Doe", "lastname", "abc@gmail.com", "password"),
+                new User("alex peter", "lastname", "pqr@gmail.com", "password"),
+                new User("cayter Doe", "lastname", "xyz@gmail.com", "password")
+        ));
+
+        Pageable pageable = PageRequest.of(0, 10);
+        when(userRepository.findAll(pageable)).thenReturn(mockPage);
+
+        Page<User> resultPage = userService.getAllUsers(pageable);
+
+        assertEquals(3, resultPage.getTotalElements());
     }
 }

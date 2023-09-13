@@ -6,6 +6,7 @@ import com.intuit.craftDemo.dto.user.SignInDto;
 import com.intuit.craftDemo.dto.user.SignupDto;
 import com.intuit.craftDemo.exceptions.AuthenticationFailedException;
 import com.intuit.craftDemo.exceptions.CustomException;
+import com.intuit.craftDemo.model.User;
 import com.intuit.craftDemo.service.AuthenticationService;
 import com.intuit.craftDemo.service.UserService;
 import org.junit.Test;
@@ -13,6 +14,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -22,8 +26,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserControllerTest {
@@ -108,6 +111,15 @@ public class UserControllerTest {
         ResponseEntity<ResponseDto> response = userController.logout(token);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("error", response.getBody().getStatus());
+    }
+
+    @Test
+    public void testFetchAllUsersFromUserTableSuccess() {
+        Pageable pageable = PageRequest.of(0, 1);
+
+        userController.getAllUsers(0, 1);
+
+        verify(userService, times(1)).getAllUsers(pageable);
     }
 
 }

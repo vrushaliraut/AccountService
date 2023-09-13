@@ -7,11 +7,15 @@ import com.intuit.craftDemo.dto.user.SignInDto;
 import com.intuit.craftDemo.dto.user.SignupDto;
 import com.intuit.craftDemo.exceptions.AuthenticationFailedException;
 import com.intuit.craftDemo.exceptions.CustomException;
+import com.intuit.craftDemo.model.User;
 import com.intuit.craftDemo.service.AuthenticationService;
 import com.intuit.craftDemo.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -61,6 +65,14 @@ public class UserController {
         }
     }
 
+    @GetMapping("/fetch/users")
+    public ResponseEntity<Page<User>> getAllUsers(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = userService.getAllUsers(pageable);
+        return ResponseEntity.ok(userPage);
+    }
 
     public static ResponseDto getResponseDto(BindingResult bindingResult) {
         return new ResponseDto(ResponseConstants.ERROR, signupBindingError(bindingResult));
